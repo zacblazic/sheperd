@@ -13,5 +13,6 @@ namespace Sheperd.Core.Providers.System
         IList<Memory> MemoryModules { get; }
         Motherboard Motherboard { get; }
         IList<Disk> Disks { get; }
+        IList<NetworkAdapter> NetworkAdapters { get; }
     }
 }
