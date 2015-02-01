@@ -6,7 +6,7 @@ using System.Management;
 using System.Collections.Generic;
 
 
-namespace Sheperd.UnitTests.Monitoring
+namespace Sheperd.UnitTests.Providers
 {
     [TestClass]
     public class WmiTest
@@ -15,7 +15,7 @@ namespace Sheperd.UnitTests.Monitoring
         public void GetAnyData()
         {
             var data = WmiHelper.Query<string>(Environment.MachineName,
-                "SELECT * FROM Win32_BIOS",
+                "SELECT * FROM Win32_PhysicalMemory",
                 results => results.Select(mo => mo.GetText(TextFormat.Mof)));
         }
     }

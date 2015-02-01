@@ -10,12 +10,14 @@ namespace Sheperd.Core.Providers.System
     public class WmiSystemInfoProvider : ISystemInfoProvider
     {
         private const string ProcessorQuery = "SELECT Architecture,DeviceID,L2CacheSize,L3CacheSize,Manufacturer,MaxClockSpeed,Name,NumberOfCores,NumberOfLogicalProcessors,SocketDesignation FROM Win32_Processor";
+        private const string MemoryQuery = "SELECT BankLabel,Capacity,DataWidth,FormFactor,Name,PartNumber,Speed,TotalWidth FROM Win32_PhysicalMemory";
         private const string MotherboadQuery = "SELECT Manufacturer,Model,Name,Product,Version FROM Win32_BaseBoard";
         private const string BiosQuery = "SELECT BiosCharacteristics,BiosVersion,InstallDate,Manufacturer,Name,ReleaseDate,SerialNumber,SMBIOSBIOSVersion,Status,Version FROM Win32_Bios";
 
         private IWmiContext _context;
 
         private IList<Processor> _Processors;
+        private IList<Memory> _MemoryModules;
         private Motherboard _Motherboard;
 
         public WmiSystemInfoProvider(IWmiContext context)
@@ -50,6 +52,36 @@ namespace Sheperd.Core.Providers.System
 
                 return this._Motherboard;
             }
+        }
+
+        public IList<Memory> MemoryModules
+        {
+            get
+            {
+                if (this._MemoryModules == null)
+                {
+                    this._MemoryModules = this.GetMemoryModules().ToList();
+                }
+
+                return this._MemoryModules;
+            }
+        }
+
+        private IEnumerable<Memory> GetMemoryModules()
+        {
+            var memoryModules = this._context.Query(MemoryQuery, mo => new Memory()
+            {
+                Bank = mo.GetPropertyValueOrDefault<string>("BankLabel", string.Empty),
+                CapacityBytes = mo.GetPropertyValueOrDefault<ulong>("Capacity", 0),
+                DataWidthBits = mo.GetPropertyValueOrDefault<ushort>("DataWidth", 0),
+                FormFactor = mo.GetPropertyValueOrDefault<ushort>("FormFactor", 0),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                PartNumber = mo.GetPropertyValueOrDefault<string>("PartNumber", string.Empty),
+                SpeedMHz = mo.GetPropertyValueOrDefault<ushort>("Speed", 0),
+                TotalWidthBits = mo.GetPropertyValueOrDefault<ushort>("TotalWidth", 0)
+            });
+
+            return memoryModules;
         }
 
         private IEnumerable<Processor> GetProcessorInfo()
