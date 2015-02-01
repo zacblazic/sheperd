@@ -12,5 +12,6 @@ namespace Sheperd.Core.Providers.System
         IList<Processor> Processors { get; }
         IList<Memory> MemoryModules { get; }
         Motherboard Motherboard { get; }
+        IList<Disk> Disks { get; }
     }
 }

@@ -13,12 +13,14 @@ namespace Sheperd.Core.Providers.System
         private const string MemoryQuery = "SELECT BankLabel,Capacity,DataWidth,FormFactor,Name,PartNumber,Speed,TotalWidth FROM Win32_PhysicalMemory";
         private const string MotherboadQuery = "SELECT Manufacturer,Model,Name,Product,Version FROM Win32_BaseBoard";
         private const string BiosQuery = "SELECT BiosCharacteristics,BiosVersion,InstallDate,Manufacturer,Name,ReleaseDate,SerialNumber,SMBIOSBIOSVersion,Status,Version FROM Win32_Bios";
+        private const string DiskQuery = "SELECT DeviceID,FirmwareRevision,InstallDate,Manufacturer,Model,Name,Partitions,SerialNumber,Size,Status FROM Win32_DiskDrive";
 
         private IWmiContext _context;
 
         private IList<Processor> _Processors;
         private IList<Memory> _MemoryModules;
         private Motherboard _Motherboard;
+        private IList<Disk> _Disks;
 
         public WmiSystemInfoProvider(IWmiContext context)
         {
@@ -44,7 +46,7 @@ namespace Sheperd.Core.Providers.System
         {
             get
             {
-                if(this._Motherboard == null)
+                if (this._Motherboard == null)
                 {
                     var motherboard = this.GetMotherboardInfo();
                     this._Motherboard = motherboard;
@@ -84,6 +86,21 @@ namespace Sheperd.Core.Providers.System
             return memoryModules;
         }
 
+        public IList<Disk> Disks
+        {
+            get
+            {
+                if (this._Disks == null)
+                {
+                    var disks = new List<Disk>();
+                    disks.AddRange(this.GetDiskInfo());
+                    this._Disks = disks;
+                }
+
+                return this._Disks;
+            }
+        }
+
         private IEnumerable<Processor> GetProcessorInfo()
         {
             var processors = this._context.Query<Processor>(ProcessorQuery, mo => new Processor()
@@ -114,21 +131,43 @@ namespace Sheperd.Core.Providers.System
                 Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
             }).FirstOrDefault();
 
+            if (motherboard != null)
+            {
             motherboard.Bios = this._context.Query<Bios>(BiosQuery, mo => new Bios()
             {
                 BiosCharacteristics = mo.GetPropertyValueOrDefault<UInt16[]>("BiosCharacteristics", null),
                 BiosVersion = mo.GetPropertyValueOrDefault<string[]>("BiosVersion", null),
-                InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", ""),// DateTime.MaxValue),
+                    InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", string.Empty),
                 Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
                 Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
-                ReleaseDate = mo.GetPropertyValueOrDefault<string>("ReleaseDate", ""),// DateTime.MaxValue),
+                    ReleaseDate = mo.GetPropertyValueOrDefault<string>("ReleaseDate", string.Empty),
                 SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
                 SMBIOSBIOSVersion = mo.GetPropertyValueOrDefault<string>("SMBIOSBIOSVersion", string.Empty),
                 Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty),
                 Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
-            }).First();
+                }).FirstOrDefault();
+            }
 
             return motherboard;
+        }
+
+        private IEnumerable<Disk> GetDiskInfo()
+        {
+            var disks = this._context.Query<Disk>(DiskQuery, mo => new Disk()
+            {
+                DeviceID = mo.GetPropertyValueOrDefault<string>("DeviceID", string.Empty),
+                FirmwareRevision = mo.GetPropertyValueOrDefault<string>("FirmwareRevision", string.Empty),
+                InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", string.Empty),
+                Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
+                Model = mo.GetPropertyValueOrDefault<string>("Model", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                Partitions = mo.GetPropertyValueOrDefault<UInt32>("Partitions", 0),
+                SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
+                Size = mo.GetPropertyValueOrDefault<UInt64>("Size", 0),
+                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty)
+            });
+
+            return disks;
         }
     }
 }

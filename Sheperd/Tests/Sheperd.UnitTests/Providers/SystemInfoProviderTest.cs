@@ -52,5 +52,11 @@ namespace Sheperd.UnitTests.Providers
             Assert.IsTrue(memoryModule.SpeedMHz > 0);
             Assert.IsTrue(memoryModule.CapacityBytes > 0);
         }
+
+        [TestMethod]
+        public void Disk()
+        {
+            var disks = this._systemInfoProvider.Disks;
+        }
     }
 }
