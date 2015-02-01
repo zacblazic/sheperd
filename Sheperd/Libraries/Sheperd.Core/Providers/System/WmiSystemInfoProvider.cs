@@ -10,10 +10,13 @@ namespace Sheperd.Core.Providers.System
     public class WmiSystemInfoProvider : ISystemInfoProvider
     {
         private const string ProcessorQuery = "SELECT Architecture,DeviceID,L2CacheSize,L3CacheSize,Manufacturer,MaxClockSpeed,Name,NumberOfCores,NumberOfLogicalProcessors,SocketDesignation FROM Win32_Processor";
+        private const string MotherboadQuery = "SELECT Manufacturer,Model,Name,Product,Version FROM Win32_BaseBoard";
+        private const string BiosQuery = "SELECT BiosCharacteristics,BiosVersion,InstallDate,Manufacturer,Name,ReleaseDate,SerialNumber,SMBIOSBIOSVersion,Status,Version FROM Win32_Bios";
 
         private IWmiContext _context;
 
         private IList<Processor> _Processors;
+        private Motherboard _Motherboard;
 
         public WmiSystemInfoProvider(IWmiContext context)
         {
@@ -35,6 +38,20 @@ namespace Sheperd.Core.Providers.System
             }
         }
 
+        public Motherboard Motherboard
+        {
+            get
+            {
+                if(this._Motherboard == null)
+                {
+                    var motherboard = this.GetMotherboardInfo();
+                    this._Motherboard = motherboard;
+                }
+
+                return this._Motherboard;
+            }
+        }
+
         private IEnumerable<Processor> GetProcessorInfo()
         {
             var processors = this._context.Query<Processor>(ProcessorQuery, mo => new Processor()
@@ -52,6 +69,34 @@ namespace Sheperd.Core.Providers.System
             });
 
             return processors;
+        }
+
+        private Motherboard GetMotherboardInfo()
+        {
+            var motherboard = this._context.Query<Motherboard>(MotherboadQuery, mo => new Motherboard()
+            {
+                Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
+                Model = mo.GetPropertyValueOrDefault<string>("Model", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                Product = mo.GetPropertyValueOrDefault<string>("Product", string.Empty),
+                Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
+            }).FirstOrDefault();
+
+            motherboard.Bios = this._context.Query<Bios>(BiosQuery, mo => new Bios()
+            {
+                BiosCharacteristics = mo.GetPropertyValueOrDefault<UInt16[]>("BiosCharacteristics", null),
+                BiosVersion = mo.GetPropertyValueOrDefault<string[]>("BiosVersion", null),
+                InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", ""),// DateTime.MaxValue),
+                Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                ReleaseDate = mo.GetPropertyValueOrDefault<string>("ReleaseDate", ""),// DateTime.MaxValue),
+                SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
+                SMBIOSBIOSVersion = mo.GetPropertyValueOrDefault<string>("SMBIOSBIOSVersion", string.Empty),
+                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty),
+                Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
+            }).First();
+
+            return motherboard;
         }
     }
 }

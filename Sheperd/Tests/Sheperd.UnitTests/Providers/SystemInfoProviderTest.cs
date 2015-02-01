@@ -18,9 +18,15 @@ namespace Sheperd.UnitTests.Providers
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void ProcessorTest()
         {
             var processors = this._systemInfoProvider.Processors;
+        }
+
+        [TestMethod]
+        public void MotherboardTest()
+        {
+            var motherboard = this._systemInfoProvider.Motherboard;
         }
     }
 }
