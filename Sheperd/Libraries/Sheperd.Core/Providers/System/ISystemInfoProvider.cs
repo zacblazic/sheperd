@@ -10,5 +10,6 @@ namespace Sheperd.Core.Providers.System
     public interface ISystemInfoProvider
     {
         IList<Processor> Processors { get; }
+        Motherboard Motherboard { get; }
     }
 }

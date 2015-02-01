@@ -45,6 +45,7 @@
     <Compile Include="Providers\IWmiContext.cs" />
     <Compile Include="Providers\ManagementObjectExtensions.cs" />
     <Compile Include="Providers\System\Hardware\ArchitectureType.cs" />
+    <Compile Include="Providers\System\Hardware\BiosCharacteristics.cs" />
     <Compile Include="Providers\System\Hardware\Disk.cs" />
     <Compile Include="Providers\System\Hardware\Memory.cs" />
     <Compile Include="Providers\System\Hardware\Motherboard.cs" />
