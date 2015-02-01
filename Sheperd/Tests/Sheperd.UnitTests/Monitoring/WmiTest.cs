@@ -15,7 +15,7 @@ namespace Sheperd.UnitTests.Monitoring
         public void GetAnyData()
         {
             var data = WmiHelper.Query<string>(Environment.MachineName,
-                "SELECT * FROM Win32_BIOS",
+                "SELECT * FROM Win32_CacheMemory",
                 results => results.Select(mo => mo.GetText(TextFormat.Mof)));
         }
     }
