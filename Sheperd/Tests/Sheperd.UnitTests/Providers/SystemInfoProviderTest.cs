@@ -43,6 +43,17 @@ namespace Sheperd.UnitTests.Providers
         }
 
         [TestMethod]
+        public void GetMemoryModules()
+        {
+            var memoryModules = this._systemInfoProvider.MemoryModules;
+            var memoryModule = memoryModules.FirstOrDefault();
+
+            Assert.IsNotNull(memoryModule);
+            Assert.IsTrue(memoryModule.SpeedMHz > 0);
+            Assert.IsTrue(memoryModule.CapacityBytes > 0);
+        }
+
+        [TestMethod]
         public void Disk()
         {
             var disks = this._systemInfoProvider.Disks;

@@ -10,6 +10,7 @@ namespace Sheperd.Core.Providers.System
     public class WmiSystemInfoProvider : ISystemInfoProvider
     {
         private const string ProcessorQuery = "SELECT Architecture,DeviceID,L2CacheSize,L3CacheSize,Manufacturer,MaxClockSpeed,Name,NumberOfCores,NumberOfLogicalProcessors,SocketDesignation FROM Win32_Processor";
+        private const string MemoryQuery = "SELECT BankLabel,Capacity,DataWidth,FormFactor,Name,PartNumber,Speed,TotalWidth FROM Win32_PhysicalMemory";
         private const string MotherboadQuery = "SELECT Manufacturer,Model,Name,Product,Version FROM Win32_BaseBoard";
         private const string BiosQuery = "SELECT BiosCharacteristics,BiosVersion,InstallDate,Manufacturer,Name,ReleaseDate,SerialNumber,SMBIOSBIOSVersion,Status,Version FROM Win32_Bios";
         private const string DiskQuery = "SELECT DeviceID,FirmwareRevision,InstallDate,Manufacturer,Model,Name,Partitions,SerialNumber,Size,Status FROM Win32_DiskDrive";
@@ -17,6 +18,7 @@ namespace Sheperd.Core.Providers.System
         private IWmiContext _context;
 
         private IList<Processor> _Processors;
+        private IList<Memory> _MemoryModules;
         private Motherboard _Motherboard;
         private IList<Disk> _Disks;
 
@@ -27,7 +29,7 @@ namespace Sheperd.Core.Providers.System
 
         public IList<Processor> Processors
         {
-            get
+            get 
             {
                 if (this._Processors == null)
                 {
@@ -52,6 +54,36 @@ namespace Sheperd.Core.Providers.System
 
                 return this._Motherboard;
             }
+        }
+
+        public IList<Memory> MemoryModules
+        {
+            get
+            {
+                if (this._MemoryModules == null)
+                {
+                    this._MemoryModules = this.GetMemoryModules().ToList();
+                }
+
+                return this._MemoryModules;
+            }
+        }
+
+        private IEnumerable<Memory> GetMemoryModules()
+        {
+            var memoryModules = this._context.Query(MemoryQuery, mo => new Memory()
+            {
+                Bank = mo.GetPropertyValueOrDefault<string>("BankLabel", string.Empty),
+                CapacityBytes = mo.GetPropertyValueOrDefault<ulong>("Capacity", 0),
+                DataWidthBits = mo.GetPropertyValueOrDefault<ushort>("DataWidth", 0),
+                FormFactor = mo.GetPropertyValueOrDefault<ushort>("FormFactor", 0),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                PartNumber = mo.GetPropertyValueOrDefault<string>("PartNumber", string.Empty),
+                SpeedMHz = mo.GetPropertyValueOrDefault<ushort>("Speed", 0),
+                TotalWidthBits = mo.GetPropertyValueOrDefault<ushort>("TotalWidth", 0)
+            });
+
+            return memoryModules;
         }
 
         public IList<Disk> Disks
@@ -101,18 +133,18 @@ namespace Sheperd.Core.Providers.System
 
             if (motherboard != null)
             {
-                motherboard.Bios = this._context.Query<Bios>(BiosQuery, mo => new Bios()
-                {
-                    BiosCharacteristics = mo.GetPropertyValueOrDefault<UInt16[]>("BiosCharacteristics", null),
-                    BiosVersion = mo.GetPropertyValueOrDefault<string[]>("BiosVersion", null),
+            motherboard.Bios = this._context.Query<Bios>(BiosQuery, mo => new Bios()
+            {
+                BiosCharacteristics = mo.GetPropertyValueOrDefault<UInt16[]>("BiosCharacteristics", null),
+                BiosVersion = mo.GetPropertyValueOrDefault<string[]>("BiosVersion", null),
                     InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", string.Empty),
-                    Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
-                    Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
                     ReleaseDate = mo.GetPropertyValueOrDefault<string>("ReleaseDate", string.Empty),
-                    SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
-                    SMBIOSBIOSVersion = mo.GetPropertyValueOrDefault<string>("SMBIOSBIOSVersion", string.Empty),
-                    Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty),
-                    Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
+                SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
+                SMBIOSBIOSVersion = mo.GetPropertyValueOrDefault<string>("SMBIOSBIOSVersion", string.Empty),
+                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty),
+                Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
                 }).FirstOrDefault();
             }
 
