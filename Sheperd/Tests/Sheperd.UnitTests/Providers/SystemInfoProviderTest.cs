@@ -35,7 +35,7 @@ namespace Sheperd.UnitTests.Providers
         }
 
         [TestMethod]
-        public void MotherboardTest()
+        public void GetMotherboardTest()
         {
             var motherboard = this._systemInfoProvider.Motherboard;
 
@@ -43,7 +43,7 @@ namespace Sheperd.UnitTests.Providers
         }
 
         [TestMethod]
-        public void GetMemoryModules()
+        public void GetMemoryModulesTest()
         {
             var memoryModules = this._systemInfoProvider.MemoryModules;
             var memoryModule = memoryModules.FirstOrDefault();
@@ -54,9 +54,20 @@ namespace Sheperd.UnitTests.Providers
         }
 
         [TestMethod]
-        public void Disk()
+        public void GetDisksTest()
         {
             var disks = this._systemInfoProvider.Disks;
+        }
+
+        [TestMethod]
+        public void GetNetworkAdaptersTest()
+        {
+            var adapters = this._systemInfoProvider.NetworkAdapters;
+            var adapter = adapters.FirstOrDefault();
+
+            Assert.IsNotNull(adapter);
+            Assert.IsFalse(string.IsNullOrEmpty(adapter.Name));
+            Assert.IsFalse(string.IsNullOrEmpty(adapter.MacAddress));
         }
     }
 }
