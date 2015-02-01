@@ -12,11 +12,13 @@ namespace Sheperd.Core.Providers.System
         private const string ProcessorQuery = "SELECT Architecture,DeviceID,L2CacheSize,L3CacheSize,Manufacturer,MaxClockSpeed,Name,NumberOfCores,NumberOfLogicalProcessors,SocketDesignation FROM Win32_Processor";
         private const string MotherboadQuery = "SELECT Manufacturer,Model,Name,Product,Version FROM Win32_BaseBoard";
         private const string BiosQuery = "SELECT BiosCharacteristics,BiosVersion,InstallDate,Manufacturer,Name,ReleaseDate,SerialNumber,SMBIOSBIOSVersion,Status,Version FROM Win32_Bios";
+        private const string DiskQuery = "SELECT DeviceID,FirmwareRevision,InstallDate,Manufacturer,Model,Name,Partitions,SerialNumber,Size,Status FROM Win32_DiskDrive";
 
         private IWmiContext _context;
 
         private IList<Processor> _Processors;
         private Motherboard _Motherboard;
+        private IList<Disk> _Disks;
 
         public WmiSystemInfoProvider(IWmiContext context)
         {
@@ -25,7 +27,7 @@ namespace Sheperd.Core.Providers.System
 
         public IList<Processor> Processors
         {
-            get 
+            get
             {
                 if (this._Processors == null)
                 {
@@ -42,13 +44,28 @@ namespace Sheperd.Core.Providers.System
         {
             get
             {
-                if(this._Motherboard == null)
+                if (this._Motherboard == null)
                 {
                     var motherboard = this.GetMotherboardInfo();
                     this._Motherboard = motherboard;
                 }
 
                 return this._Motherboard;
+            }
+        }
+
+        public IList<Disk> Disks
+        {
+            get
+            {
+                if (this._Disks == null)
+                {
+                    var disks = new List<Disk>();
+                    disks.AddRange(this.GetDiskInfo());
+                    this._Disks = disks;
+                }
+
+                return this._Disks;
             }
         }
 
@@ -82,21 +99,43 @@ namespace Sheperd.Core.Providers.System
                 Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
             }).FirstOrDefault();
 
-            motherboard.Bios = this._context.Query<Bios>(BiosQuery, mo => new Bios()
+            if (motherboard != null)
             {
-                BiosCharacteristics = mo.GetPropertyValueOrDefault<UInt16[]>("BiosCharacteristics", null),
-                BiosVersion = mo.GetPropertyValueOrDefault<string[]>("BiosVersion", null),
-                InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", ""),// DateTime.MaxValue),
-                Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
-                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
-                ReleaseDate = mo.GetPropertyValueOrDefault<string>("ReleaseDate", ""),// DateTime.MaxValue),
-                SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
-                SMBIOSBIOSVersion = mo.GetPropertyValueOrDefault<string>("SMBIOSBIOSVersion", string.Empty),
-                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty),
-                Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
-            }).First();
+                motherboard.Bios = this._context.Query<Bios>(BiosQuery, mo => new Bios()
+                {
+                    BiosCharacteristics = mo.GetPropertyValueOrDefault<UInt16[]>("BiosCharacteristics", null),
+                    BiosVersion = mo.GetPropertyValueOrDefault<string[]>("BiosVersion", null),
+                    InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", string.Empty),
+                    Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
+                    Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                    ReleaseDate = mo.GetPropertyValueOrDefault<string>("ReleaseDate", string.Empty),
+                    SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
+                    SMBIOSBIOSVersion = mo.GetPropertyValueOrDefault<string>("SMBIOSBIOSVersion", string.Empty),
+                    Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty),
+                    Version = mo.GetPropertyValueOrDefault<string>("Version", string.Empty)
+                }).FirstOrDefault();
+            }
 
             return motherboard;
+        }
+
+        private IEnumerable<Disk> GetDiskInfo()
+        {
+            var disks = this._context.Query<Disk>(DiskQuery, mo => new Disk()
+            {
+                DeviceID = mo.GetPropertyValueOrDefault<string>("DeviceID", string.Empty),
+                FirmwareRevision = mo.GetPropertyValueOrDefault<string>("FirmwareRevision", string.Empty),
+                InstallDate = mo.GetPropertyValueOrDefault<string>("InstallDate", string.Empty),
+                Manufacturer = mo.GetPropertyValueOrDefault<string>("Manufacturer", string.Empty),
+                Model = mo.GetPropertyValueOrDefault<string>("Model", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                Partitions = mo.GetPropertyValueOrDefault<UInt32>("Partitions", 0),
+                SerialNumber = mo.GetPropertyValueOrDefault<string>("SerialNumber", string.Empty),
+                Size = mo.GetPropertyValueOrDefault<UInt64>("Size", 0),
+                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty)
+            });
+
+            return disks;
         }
     }
 }

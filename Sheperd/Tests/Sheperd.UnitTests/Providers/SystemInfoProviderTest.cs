@@ -28,5 +28,11 @@ namespace Sheperd.UnitTests.Providers
         {
             var motherboard = this._systemInfoProvider.Motherboard;
         }
+
+        [TestMethod]
+        public void Disk()
+        {
+            var disks = this._systemInfoProvider.Disks;
+        }
     }
 }
