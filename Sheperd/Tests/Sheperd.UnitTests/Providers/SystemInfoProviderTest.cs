@@ -46,6 +46,8 @@ namespace Sheperd.UnitTests.Providers
         public void Disk()
         {
             var disks = this._systemInfoProvider.Disks;
+
+            Assert.IsNotNull(disks);
         }
     }
 }
