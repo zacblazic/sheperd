@@ -71,5 +71,25 @@ namespace Sheperd.UnitTests.Providers
             Assert.IsFalse(string.IsNullOrEmpty(adapter.Name));
             Assert.IsFalse(string.IsNullOrEmpty(adapter.MacAddress));
         }
+
+        [TestMethod]
+        public void GetVideoCards()
+        {
+            var videoCards = this._systemInfoProvider.VideoCards;
+            var videoCard = videoCards.FirstOrDefault();
+
+            Assert.IsNotNull(videoCard);
+            Assert.IsFalse(string.IsNullOrEmpty(videoCard.Name));
+        }
+
+        [TestMethod]
+        public void GetDrivers()
+        {
+            var drivers = this._systemInfoProvider.Drivers;
+            var driver = drivers.FirstOrDefault();
+
+            Assert.IsNotNull(driver);
+            Assert.IsFalse(string.IsNullOrEmpty(driver.Name));
+        }
     }
 }

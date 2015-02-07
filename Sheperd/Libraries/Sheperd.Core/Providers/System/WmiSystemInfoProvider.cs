@@ -1,4 +1,5 @@
 ﻿using Sheperd.Core.Providers.System.Hardware;
+using Sheperd.Core.Providers.System.Software;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,9 @@ namespace Sheperd.Core.Providers.System
         private const string BiosQuery = "SELECT BiosCharacteristics,BiosVersion,InstallDate,Manufacturer,Name,ReleaseDate,SerialNumber,SMBIOSBIOSVersion,Status,Version FROM Win32_Bios";
         private const string DiskQuery = "SELECT DeviceID,FirmwareRevision,InstallDate,Manufacturer,Model,Name,Partitions,SerialNumber,Size,Status FROM Win32_DiskDrive";
         private const string NetworkAdapterQuery = "SELECT AdapterType,DeviceID,GUID,InterfaceIndex,MACAddress,Manufacturer,Name FROM Win32_NetworkAdapter WHERE PhysicalAdapter = TRUE";
+        private const string VideoCardQuery = "SELECT Description,Name,DriverDate,DriverVersion,Status,CurrentRefreshRate,CurrentHorizontalResolution,CurrentVerticalResolution,InstalledDisplayDrivers FROM Win32_VideoController";
+
+        private const string DriverQuery = "SELECT AcceptPause,AcceptStop,Description,DisplayName,Name,PathName,Started,StartMode,StartName,State,Status FROM Win32_SystemDriver";
 
         private IWmiContext _context;
 
@@ -23,6 +27,9 @@ namespace Sheperd.Core.Providers.System
         private Motherboard _Motherboard;
         private IList<Disk> _Disks;
         private IList<NetworkAdapter> _NetworkAdapters;
+        private IList<VideoCard> _VideoCards;
+
+        private IList<Driver> _Drivers;
 
         public WmiSystemInfoProvider(IWmiContext context)
         {
@@ -31,7 +38,7 @@ namespace Sheperd.Core.Providers.System
 
         public IList<Processor> Processors
         {
-            get 
+            get
             {
                 if (this._Processors == null)
                 {
@@ -91,6 +98,32 @@ namespace Sheperd.Core.Providers.System
                 }
 
                 return this._NetworkAdapters;
+            }
+        }
+
+        public IList<VideoCard> VideoCards
+        {
+            get
+            {
+                if (this._VideoCards == null)
+                {
+                    this._VideoCards = this.GetVideoCards().ToList();
+                }
+
+                return this._VideoCards;
+            }
+        }
+
+        public IList<Driver> Drivers
+        {
+            get
+            {
+                if(this._Drivers == null)
+                {
+                    this._Drivers = this.GetDrivers().ToList();
+                }
+
+                return this._Drivers;
             }
         }
 
@@ -194,6 +227,44 @@ namespace Sheperd.Core.Providers.System
             });
 
             return adapters;
+        }
+
+        private IEnumerable<VideoCard> GetVideoCards()
+        {
+            var videoCards = this._context.Query<VideoCard>(VideoCardQuery, mo => new VideoCard()
+            {
+                Description = mo.GetPropertyValueOrDefault<string>("Description", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                InstalledDisplayDrivers = mo.GetPropertyValueOrDefault<string>("InstalledDisplayDrivers", string.Empty),
+                DriverVersion = mo.GetPropertyValueOrDefault<string>("DriverVersion", string.Empty),
+                DriverDate = mo.GetPropertyValueOrDefault<string>("DriverDate", string.Empty),
+                CurrentHorizontalResolution = mo.GetPropertyValueOrDefault<UInt32>("CurrentHorizontalResolution", 0),
+                CurrentVerticalResolution = mo.GetPropertyValueOrDefault<UInt32>("CurrentVerticalResolution", 0),
+                CurrentRefreshRate = mo.GetPropertyValueOrDefault<UInt32>("CurrentRefreshRate", 0),
+                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty)
+            });
+
+            return videoCards;
+        }
+
+        private IEnumerable<Driver> GetDrivers()
+        {
+            var drivers = this._context.Query<Driver>(DriverQuery, mo => new Driver()
+            {
+                AcceptPause = mo.GetPropertyValueOrDefault<bool>("AcceptPause", false),
+                AcceptStop = mo.GetPropertyValueOrDefault<bool>("AcceptStop", false),
+                Description = mo.GetPropertyValueOrDefault<string>("Description", string.Empty), 
+                DisplayName = mo.GetPropertyValueOrDefault<string>("DisplayName", string.Empty),
+                Name = mo.GetPropertyValueOrDefault<string>("Name", string.Empty),
+                PathName = mo.GetPropertyValueOrDefault<string>("PathName", string.Empty),
+                Started = mo.GetPropertyValueOrDefault<bool>("Started", false),
+                StartMode = mo.GetPropertyValueOrDefault<string>("StartMode", string.Empty),
+                StartName = mo.GetPropertyValueOrDefault<string>("StartName", string.Empty),
+                State = mo.GetPropertyValueOrDefault<string>("State", string.Empty),
+                Status = mo.GetPropertyValueOrDefault<string>("Status", string.Empty)
+            });
+
+            return drivers;
         }
     }
 }

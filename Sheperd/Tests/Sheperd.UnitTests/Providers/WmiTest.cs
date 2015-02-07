@@ -15,7 +15,7 @@ namespace Sheperd.UnitTests.Providers
         public void GetAnyData()
         {
             var data = WmiHelper.Query<string>(Environment.MachineName,
-                "SELECT * FROM Win32_NetworkAdapter WHERE PhysicalAdapter = TRUE",
+                "SELECT * FROM Win32_ComputerSystem",
                 results => results.Select(mo => mo.GetText(TextFormat.Mof)));
         }
     }
