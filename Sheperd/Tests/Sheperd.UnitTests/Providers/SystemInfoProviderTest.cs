@@ -83,6 +83,12 @@ namespace Sheperd.UnitTests.Providers
         }
 
         [TestMethod]
+        public void GetOperatingSystem()
+        {
+
+        }
+
+        [TestMethod]
         public void GetDrivers()
         {
             var drivers = this._systemInfoProvider.Drivers;
