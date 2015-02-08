@@ -47,10 +47,12 @@
     <Compile Include="Logging\Log4NetLogger.cs" />
     <Compile Include="Monitoring\WmiHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\CounterGroup.cs" />
     <Compile Include="Providers\CounterManager.cs" />
     <Compile Include="Providers\ICounterManager.cs" />
     <Compile Include="Providers\IWmiContext.cs" />
     <Compile Include="Providers\ManagementObjectExtensions.cs" />
+    <Compile Include="Providers\Memory\CounterMemoryProvider.cs" />
     <Compile Include="Providers\Processor\CounterProcessorProvider.cs" />
     <Compile Include="Providers\Processor\WmiProcessorProvider.cs" />
     <Compile Include="Providers\System\Hardware\ArchitectureType.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="Providers\WmiContext.cs" />
     <Compile Include="Sampling\ISample.cs" />
     <Compile Include="Sampling\ISampleSet.cs" />
+    <Compile Include="Sampling\MemorySample.cs" />
     <Compile Include="Sampling\ProcessorSample.cs" />
     <Compile Include="Sampling\SampleSet.cs" />
   </ItemGroup>
