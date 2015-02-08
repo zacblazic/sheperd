@@ -1,4 +1,5 @@
 ﻿using Sheperd.Core.Providers.System.Hardware;
+using Sheperd.Core.Providers.System.Software;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,8 @@ namespace Sheperd.Core.Providers.System
         Motherboard Motherboard { get; }
         IList<Disk> Disks { get; }
         IList<NetworkAdapter> NetworkAdapters { get; }
+        IList<VideoCard> VideoCards { get; }
+
+        IList<Driver> Drivers { get; }
     }
 }

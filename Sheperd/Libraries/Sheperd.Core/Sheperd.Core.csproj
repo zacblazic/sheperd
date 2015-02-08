@@ -57,6 +57,7 @@
     <Compile Include="Providers\System\Hardware\Processor.cs" />
     <Compile Include="Providers\System\ISystemInfoProvider.cs" />
     <Compile Include="Providers\System\Hardware\VideoCard.cs" />
+    <Compile Include="Providers\System\Software\Driver.cs" />
     <Compile Include="Providers\System\Software\OperatingSystem.cs" />
     <Compile Include="Providers\System\WmiSystemInfoProvider.cs" />
     <Compile Include="Providers\WmiContext.cs" />
