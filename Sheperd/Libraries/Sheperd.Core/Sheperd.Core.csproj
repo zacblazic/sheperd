@@ -61,11 +61,9 @@
     <Compile Include="Providers\System\Software\OperatingSystem.cs" />
     <Compile Include="Providers\System\WmiSystemInfoProvider.cs" />
     <Compile Include="Providers\WmiContext.cs" />
-    <Compile Include="Sampling\IInstancedSample.cs" />
     <Compile Include="Sampling\ISample.cs" />
     <Compile Include="Sampling\ISampleSet.cs" />
-    <Compile Include="Sampling\Processor\UsageSample.cs" />
-    <Compile Include="Sampling\InstancedSample.cs" />
+    <Compile Include="Sampling\ProcessorSample.cs" />
     <Compile Include="Sampling\SampleSet.cs" />
   </ItemGroup>
   <ItemGroup />

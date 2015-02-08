@@ -1,5 +1,4 @@
 ﻿using Sheperd.Core.Sampling;
-using Sheperd.Core.Sampling.Processor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,17 +21,13 @@ namespace Sheperd.Core.Providers
         public ISampleSet TakeSample()
         {
             var processorTimeCounters = this._counterManager.GetInstances("Processor", "% Processor Time");
-            var processorPrivilegedTime = this._counterManager.GetInstances("Processor", "% Privileged Time");
 
             var samples = (from pt in processorTimeCounters
-                           join ppt in processorPrivilegedTime
-                             on pt.InstanceName equals ppt.InstanceName
-                           select new UsageSample()
+                           select new ProcessorSample()
                            {
                                Time = DateTime.UtcNow,
                                Instance = pt.InstanceName,
-                               PercentProcessorTime = pt.NextValue(),
-                               PercentPrivilegedTime = ppt.NextValue()
+                               Usage = pt.NextValue()
                            })
                            .ToList();
 

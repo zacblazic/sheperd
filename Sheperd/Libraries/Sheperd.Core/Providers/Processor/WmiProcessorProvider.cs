@@ -1,11 +1,10 @@
-﻿using Sheperd.Core.Sampling.Processor;
+﻿using Sheperd.Core.Sampling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sheperd.Core.Providers;
-using Sheperd.Core.Sampling;
 using System.Management;
 
 namespace Sheperd.Core.Providers
@@ -24,10 +23,11 @@ namespace Sheperd.Core.Providers
         {
             var mos = this._context.Query<ManagementObject>(ProcessorQuery, mo => mo.ToList()).ToList();
 
-            var samples = this._context.Query<UsageSample>(ProcessorQuery, mo => new UsageSample()
+            var samples = this._context.Query<ProcessorSample>(ProcessorQuery, mo => new ProcessorSample()
             {
                 Time = DateTime.UtcNow,
-                PercentProcessorTime = mo.GetPropertyValueOrDefault<float>("PercentProcessorTime", 0)
+                Instance = string.Empty,
+                Usage = mo.GetPropertyValueOrDefault<float>("PercentProcessorTime", 0)
             });
 
             return new SampleSet(samples);

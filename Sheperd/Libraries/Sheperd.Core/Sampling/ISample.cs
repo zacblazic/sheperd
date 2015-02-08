@@ -9,5 +9,6 @@ namespace Sheperd.Core.Sampling
     public interface ISample
     {
         DateTime Time { get; }
+        string Instance { get; }
     }
 }
