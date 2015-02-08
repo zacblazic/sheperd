@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sheperd.Core.Sampling.Processor
+namespace Sheperd.Core.Sampling
 {
-    public class UsageSample : IInstancedSample
+    public class InstancedSample : IInstancedSample
     {
         public DateTime Time { get; set; }
+        public string Name { get; set; }
         public string Instance { get; set; }
-        public float PercentProcessorTime { get; set; }
-        public float PercentPrivilegedTime { get; set; }
+        public float Value { get; set; }
     }
 }

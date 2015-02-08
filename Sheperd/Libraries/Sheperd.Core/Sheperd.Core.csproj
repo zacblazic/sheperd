@@ -42,8 +42,12 @@
   <ItemGroup>
     <Compile Include="Monitoring\WmiHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\CounterManager.cs" />
+    <Compile Include="Providers\ICounterManager.cs" />
     <Compile Include="Providers\IWmiContext.cs" />
     <Compile Include="Providers\ManagementObjectExtensions.cs" />
+    <Compile Include="Providers\Processor\CounterProcessorProvider.cs" />
+    <Compile Include="Providers\Processor\WmiProcessorProvider.cs" />
     <Compile Include="Providers\System\Hardware\ArchitectureType.cs" />
     <Compile Include="Providers\System\Hardware\BiosCharacteristics.cs" />
     <Compile Include="Providers\System\Hardware\Disk.cs" />
@@ -56,11 +60,14 @@
     <Compile Include="Providers\System\Software\OperatingSystem.cs" />
     <Compile Include="Providers\System\WmiSystemInfoProvider.cs" />
     <Compile Include="Providers\WmiContext.cs" />
+    <Compile Include="Sampling\IInstancedSample.cs" />
+    <Compile Include="Sampling\ISample.cs" />
+    <Compile Include="Sampling\ISampleSet.cs" />
     <Compile Include="Sampling\Processor\UsageSample.cs" />
+    <Compile Include="Sampling\InstancedSample.cs" />
+    <Compile Include="Sampling\SampleSet.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sampling\Disk\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

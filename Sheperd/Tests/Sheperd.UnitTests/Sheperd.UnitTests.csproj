@@ -54,6 +54,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Providers\Processor\CounterProcessorProviderTest.cs" />
+    <Compile Include="Providers\Processor\WmiProcessorProviderTest.cs" />
+    <Compile Include="Providers\CounterTest.cs" />
     <Compile Include="Providers\WmiTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\SystemInfoProviderTest.cs" />
